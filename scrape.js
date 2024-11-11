@@ -15,9 +15,11 @@ async function scrapeEarthquakeData() {
 
     const earthquakeData = [];
 
+    // there are three tables in the page, we are only interested in the 2nd table
+
     // Adjust the selector based on the actual structure of the website
-    $("table tbody tr").each((index, element) => {
-      if (index >= 3) {
+    $("body > div > table:nth-child(4) tbody tr").each((index, element) => {
+      if (index >= 1) {
         const date = $(element).find("td").eq(0).text().trim();
         const latitude = $(element).find("td").eq(1).text().trim();
         const longitude = $(element).find("td").eq(2).text().trim();
@@ -30,6 +32,12 @@ async function scrapeEarthquakeData() {
     });
 
     console.log(earthquakeData);
+
+    // insert your code here to save the data to a database or file
+
+    // save to text file
+    const fs = require("fs");
+    fs.writeFileSync("earthquake-data.json", JSON.stringify(earthquakeData, null, 2));
   } catch (error) {
     console.error("Error fetching data:", error);
   }
