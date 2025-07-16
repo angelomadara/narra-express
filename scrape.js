@@ -27,7 +27,14 @@ async function scrapeEarthquakeData() {
         const magnitude = $(element).find("td").eq(4).text().trim();
         const location = $(element).find("td").eq(5).text().trim();
 
-        earthquakeData.push({ date, latitude, longitude, depth, magnitude, location });
+        earthquakeData.push({
+          date,
+          latitude,
+          longitude,
+          depth,
+          magnitude,
+          location,
+        });
       }
     });
 
@@ -37,7 +44,11 @@ async function scrapeEarthquakeData() {
 
     // save to text file
     const fs = require("fs");
-    fs.writeFileSync("earthquake-data.json", JSON.stringify(earthquakeData, null, 2));
+    // rename the file which is the date now
+    fs.writeFileSync(
+      `earthquake-data-${new Date()}.json`,
+      JSON.stringify(earthquakeData, null, 2)
+    );
   } catch (error) {
     console.error("Error fetching data:", error);
   }
