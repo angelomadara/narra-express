@@ -8,8 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "deploy:production": "npx wrangler deploy --env production",
-    "deploy:staging": "npx wrangler deploy --env staging"
+    "deploy:production": "npm run build && npx wrangler deploy --name narra-production --route narra.oldhat.dev/*",
+    "deploy:staging": "npm run build && npx wrangler deploy --name narra-staging --route staging.oldhat.dev/*"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.8.0",

@@ -4,15 +4,6 @@ main = ".output/server/index.mjs"
 compatibility_date = "2025-08-06"
 compatibility_flags = ["nodejs_compat"]
 
-[build]
-command = "npx nuxi build"
 
-[env.staging]
-[[env.staging.routes]]
-pattern = "staging.oldhat.dev/*"
-zone_name = "oldhat.xyz"
 
-[env.production]
-[[env.production.routes]]
-pattern = "narra.oldhat.dev/*"
-zone_name = "oldhat.xyz"
+
