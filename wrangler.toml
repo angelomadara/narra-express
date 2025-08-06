@@ -1,0 +1,7 @@
+name = "nuxt-static-worker"
+type = "javascript"
+main = "worker.js"
+compatibility_date = "2025-08-06"
+
+[site]
+bucket = "./.output/public"
