@@ -1,4 +1,4 @@
-name = "nuxt-ssr"
+name = "github-narra"
 type = "module"
 main = "worker.js"
 compatibility_date = "2025-08-06"
