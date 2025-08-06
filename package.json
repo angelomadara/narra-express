@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "deploy:production": "npx wrangler deploy --env production",
+    "deploy:staging": "npx wrangler deploy --env staging"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.8.0",
@@ -21,5 +23,8 @@
     "typescript": "^5.9.2",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.28.0"
   }
 }
