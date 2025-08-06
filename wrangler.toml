@@ -1,4 +1,4 @@
-name = "nuxt-static-worker"
+name = "nuxt-static"
 type = "javascript"
 main = "worker.js"
 compatibility_date = "2025-08-06"
