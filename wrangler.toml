@@ -1,7 +1,11 @@
-name = "nuxt-ssr"
+name = "narra"
 type = "module"
 main = "worker.js"
 compatibility_date = "2025-08-06"
 
 [build]
 command = "npx nuxi build"
+
+[[routes]]
+pattern = "narra.oldhat.dev/*"
+zone_name = "oldhat.dev"
