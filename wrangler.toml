@@ -1,7 +1,7 @@
-name = "nuxt-static"
-type = "javascript"
+name = "nuxt-ssr"
+type = "module"
 main = "worker.js"
 compatibility_date = "2025-08-06"
 
-[site]
-bucket = "./.output/public"
+[build]
+command = "npx nuxi build"
