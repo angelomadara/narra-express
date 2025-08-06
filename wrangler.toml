@@ -6,6 +6,12 @@ compatibility_date = "2025-08-06"
 [build]
 command = "npx nuxi build"
 
-[[routes]]
+[env.production]
+[[env.production.routes]]
 pattern = "narra.oldhat.dev/*"
-zone_name = "oldhat.dev"
+zone_name = "oldhat.xyz"
+
+[env.staging]
+[[env.staging.routes]]
+pattern = "narra-test.oldhat.dev/*"
+zone_name = "oldhat.xyz"
