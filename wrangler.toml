@@ -4,6 +4,4 @@ main = ".output/server/index.mjs"
 compatibility_date = "2025-08-06"
 compatibility_flags = ["nodejs_compat"]
 
-[[routes]]
-pattern = "test-narra.oldhat.xyz/*"
-zone_name = "oldhat.xyz"
+route = { pattern = "test-narra.oldhat.xyz/*", zone_name = "oldhat.xyz" }
