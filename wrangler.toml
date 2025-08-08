@@ -1,7 +1,10 @@
-name = "github-narra"
+name = "narra"
 type = "module"
-main = "worker.js"
+main = ".output/server/index.mjs"
 compatibility_date = "2025-08-06"
+compatibility_flags = ["nodejs_compat"]
 
-[build]
-command = "npx nuxi build"
+route = "staging-narra.oldhat.xyz/*"
+zone_id = "0ae3769923b6304486d22d7449ee855c"
+
+account_id = "947b30f9bcd09ea8c85d7a96918a56c3"

@@ -12,4 +12,10 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui'
   ],
+  image: {
+    provider: 'ipx'
+  },
+  nitro: {
+    preset: 'cloudflare-module'
+  }
 })
