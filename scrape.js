@@ -12,6 +12,7 @@ async function scrapeEarthquakeData() {
   try {
     const { data } = await axios.get(url, { httpsAgent: agent });
     const $ = cheerio.load(data);
+    // test for mirroring in gitlab
 
     const earthquakeData = [];
 
