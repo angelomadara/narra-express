@@ -13,4 +13,5 @@ jobs:
       - name: Push to GitLab
         run: |
           git remote add gitlab https://oauth2:glpat-tYoMz9DcRwC4dxBWpLaym286MQp1OjFibW5hCw.01.1208hgh82@gitlab.com/personal-kind/earthquake-ph-nodejs.git
-          git push --mirror gitlab
+          git push --all gitlab
+          git push --tags gitlab
