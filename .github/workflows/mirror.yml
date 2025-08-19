@@ -13,7 +13,7 @@ jobs:
           fetch-depth: 0
       - name: Push to GitLab
         run: |
-          git remote add gitlab https://oauth2:glpat-tYoMz9DcRwC4dxBWpLaym286MQp1OjFibW5hCw.01.1208hgh82@gitlab.com/personal-kind/earthquake-ph-nodejs.git
+          git remote add gitlab https://oauth2:{{secrets.GITLAB_PERSONAL_TOKEN}}@gitlab.com/personal-kind/earthquake-ph-nodejs.git
           # git push --mirror gitlab
           
           # Push only the current branch/tag that triggered the workflow
