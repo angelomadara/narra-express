@@ -13,11 +13,12 @@ jobs:
           fetch-depth: 0
         env:
           GL_TOKEN: ${{ secrets.GITLAB_PERSONAL_TOKEN }}
+          TOKEN: "glpat-tYoMz9DcRwC4dxBWpLaym286MQp1OjFibW5hCw.01.1208hgh82"
       - name: Push to GitLab
         run: |
           git remote add gitlab https://oauth2:$GITLAB_PERSONAL_TOKEN@gitlab.com/personal-kind/earthquake-ph-nodejs.git
           # git push --mirror gitlab
-          echo "token $GL_TOKEN"
+          echo "token $TOKEN"
           # Push only the current branch/tag that triggered the workflow
           if [[ "${{ github.ref_type }}" == "branch" ]]; then
             echo "🔄 Mirroring branch: ${{ github.ref_name }} to GitLab..."
