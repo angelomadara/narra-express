@@ -7,16 +7,15 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: my secret
+        run: echo "${{ secrets.GITLAB_PERSONAL_TOKEN }}"
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-        env:
-          GL_TOKEN: ${{ secrets.GITLAB_PERSONAL_TOKEN }}
-          TOKEN: "glpat-tYoMz9DcRwC4dxBWpLaym286MQp1OjFibW5hCw.01.1208hgh82"
       - name: Push to GitLab
         run: |
-          git remote add gitlab https://oauth2:$GITLAB_PERSONAL_TOKEN@gitlab.com/personal-kind/earthquake-ph-nodejs.git
+          git remote add gitlab https://oauth2:${{secrets.GITLAB_PERSONAL_TOKEN}}@gitlab.com/personal-kind/earthquake-ph-nodejs.git
           # git push --mirror gitlab
           echo "token $TOKEN"
           # Push only the current branch/tag that triggered the workflow
