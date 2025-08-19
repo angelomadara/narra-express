@@ -8,16 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: my secret
-        run: echo "${{ secrets.GITLAB_PERSONAL_TOKEN }}"
+        run: echo "${{ secrets.GL_PERSONAL_TOKEN }}"
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Push to GitLab
         run: |
-          git remote add gitlab https://oauth2:${{secrets.GITLAB_PERSONAL_TOKEN}}@gitlab.com/personal-kind/earthquake-ph-nodejs.git
+          git remote add gitlab https://oauth2:${{ secrets.GL_PERSONAL_TOKEN }}@gitlab.com/personal-kind/earthquake-ph-nodejs.git
           # git push --mirror gitlab
-          echo "token $TOKEN"
           # Push only the current branch/tag that triggered the workflow
           if [[ "${{ github.ref_type }}" == "branch" ]]; then
             echo "🔄 Mirroring branch: ${{ github.ref_name }} to GitLab..."
