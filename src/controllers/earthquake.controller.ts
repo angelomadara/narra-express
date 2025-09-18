@@ -7,6 +7,12 @@ class EarthquakeController {
 
   constructor() {
     this.earthquakeService = new EarthquakeService();
+
+    // Bind all methods in constructor
+    this.createEarthquake = this.createEarthquake.bind(this);
+    this.getAllEarthquakes = this.getAllEarthquakes.bind(this);
+    this.getEarthquakeById = this.getEarthquakeById.bind(this);
+    // ... bind all methods
   }
 
   /**

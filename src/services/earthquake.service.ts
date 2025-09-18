@@ -1,148 +1,114 @@
-import { pool } from '../config/database';
+import { AppDataSource } from '../config/database';
 import { Earthquake, EarthquakeFilters } from '../models/earthquake.model';
 import { CreateEarthquakeDTO, UpdateEarthquakeDTO } from '../dto/earthquake.dto';
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { Repository, Like, Between, MoreThanOrEqual, LessThanOrEqual } from 'typeorm';
 
 export class EarthquakeService {
+  private earthquakeRepository: Repository<Earthquake>;
+
+  constructor() {
+    this.earthquakeRepository = AppDataSource.getRepository(Earthquake);
+  }
   
   async createEarthquake(data: CreateEarthquakeDTO): Promise<Earthquake> {
-    const query = `
-      INSERT INTO earthquakes (magnitude, location, depth, date_time, latitude, longitude, source)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    const [result] = await pool.execute<ResultSetHeader>(query, [
-      data.magnitude,
-      data.location,
-      data.depth,
-      data.date_time,
-      data.latitude || null,
-      data.longitude || null,
-      data.source || null
-    ]);
+    const earthquake = new Earthquake();
+    earthquake.magnitude = data.magnitude;
+    earthquake.location = data.location;
+    earthquake.depth = data.depth;
+    earthquake.date_time = data.date_time as Date;
+    earthquake.latitude = data.latitude || undefined;
+    earthquake.longitude = data.longitude || undefined;
+    earthquake.source = data.source || undefined;
 
-    return this.getEarthquakeById(result.insertId);
+    return await this.earthquakeRepository.save(earthquake);
   }
 
   async getAllEarthquakes(filters: EarthquakeFilters = {}): Promise<Earthquake[]> {
-    let query = 'SELECT * FROM earthquakes WHERE 1=1';
-    const params: any[] = [];
+    const queryBuilder = this.earthquakeRepository.createQueryBuilder('earthquake');
 
     if (filters.minMagnitude) {
-      query += ' AND magnitude >= ?';
-      params.push(filters.minMagnitude);
+      queryBuilder.andWhere('earthquake.magnitude >= :minMagnitude', { minMagnitude: filters.minMagnitude });
     }
 
     if (filters.maxMagnitude) {
-      query += ' AND magnitude <= ?';
-      params.push(filters.maxMagnitude);
+      queryBuilder.andWhere('earthquake.magnitude <= :maxMagnitude', { maxMagnitude: filters.maxMagnitude });
     }
 
     if (filters.location) {
-      query += ' AND location LIKE ?';
-      params.push(`%${filters.location}%`);
+      queryBuilder.andWhere('earthquake.location LIKE :location', { location: `%${filters.location}%` });
     }
 
     if (filters.startDate) {
-      query += ' AND date_time >= ?';
-      params.push(filters.startDate);
+      queryBuilder.andWhere('earthquake.date_time >= :startDate', { startDate: filters.startDate });
     }
 
     if (filters.endDate) {
-      query += ' AND date_time <= ?';
-      params.push(filters.endDate);
+      queryBuilder.andWhere('earthquake.date_time <= :endDate', { endDate: filters.endDate });
     }
 
-    query += ' ORDER BY date_time DESC';
+    queryBuilder.orderBy('earthquake.date_time', 'DESC');
 
     if (filters.limit) {
-      query += ' LIMIT ?';
-      params.push(filters.limit);
+      queryBuilder.limit(filters.limit);
       
       if (filters.offset) {
-        query += ' OFFSET ?';
-        params.push(filters.offset);
+        queryBuilder.offset(filters.offset);
       }
     }
 
-    const [rows] = await pool.execute<RowDataPacket[]>(query, params);
-    return rows as Earthquake[];
+    return await queryBuilder.getMany();
   }
 
   async getEarthquakeById(id: number): Promise<Earthquake> {
-    const query = 'SELECT * FROM earthquakes WHERE id = ?';
-    const [rows] = await pool.execute<RowDataPacket[]>(query, [id]);
+    const earthquake = await this.earthquakeRepository.findOne({ where: { id } });
     
-    if (rows.length === 0) {
+    if (!earthquake) {
       throw new Error('Earthquake not found');
     }
     
-    return rows[0] as Earthquake;
+    return earthquake;
   }
 
   async updateEarthquake(id: number, data: UpdateEarthquakeDTO): Promise<Earthquake> {
-    const fields: string[] = [];
-    const params: any[] = [];
-
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        fields.push(`${key} = ?`);
-        params.push(value);
-      }
-    });
-
-    if (fields.length === 0) {
-      throw new Error('No fields to update');
-    }
-
-    fields.push('updated_at = NOW()');
-    params.push(id);
-
-    const query = `UPDATE earthquakes SET ${fields.join(', ')} WHERE id = ?`;
-    await pool.execute(query, params);
-
-    return this.getEarthquakeById(id);
+    const earthquake = await this.getEarthquakeById(id);
+    
+    // Update only provided fields
+    Object.assign(earthquake, data);
+    
+    return await this.earthquakeRepository.save(earthquake);
   }
 
   async deleteEarthquake(id: number): Promise<void> {
-    const query = 'DELETE FROM earthquakes WHERE id = ?';
-    const [result] = await pool.execute<ResultSetHeader>(query, [id]);
+    const result = await this.earthquakeRepository.delete(id);
     
-    if (result.affectedRows === 0) {
+    if (result.affected === 0) {
       throw new Error('Earthquake not found');
     }
   }
 
   async getEarthquakeCount(filters: EarthquakeFilters = {}): Promise<number> {
-    let query = 'SELECT COUNT(*) as count FROM earthquakes WHERE 1=1';
-    const params: any[] = [];
+    const queryBuilder = this.earthquakeRepository.createQueryBuilder('earthquake');
 
     if (filters.minMagnitude) {
-      query += ' AND magnitude >= ?';
-      params.push(filters.minMagnitude);
+      queryBuilder.andWhere('earthquake.magnitude >= :minMagnitude', { minMagnitude: filters.minMagnitude });
     }
 
     if (filters.maxMagnitude) {
-      query += ' AND magnitude <= ?';
-      params.push(filters.maxMagnitude);
+      queryBuilder.andWhere('earthquake.magnitude <= :maxMagnitude', { maxMagnitude: filters.maxMagnitude });
     }
 
     if (filters.location) {
-      query += ' AND location LIKE ?';
-      params.push(`%${filters.location}%`);
+      queryBuilder.andWhere('earthquake.location LIKE :location', { location: `%${filters.location}%` });
     }
 
     if (filters.startDate) {
-      query += ' AND date_time >= ?';
-      params.push(filters.startDate);
+      queryBuilder.andWhere('earthquake.date_time >= :startDate', { startDate: filters.startDate });
     }
 
     if (filters.endDate) {
-      query += ' AND date_time <= ?';
-      params.push(filters.endDate);
+      queryBuilder.andWhere('earthquake.date_time <= :endDate', { endDate: filters.endDate });
     }
 
-    const [rows] = await pool.execute<RowDataPacket[]>(query, params);
-    return (rows[0] as any).count;
+    return await queryBuilder.getCount();
   }
 }

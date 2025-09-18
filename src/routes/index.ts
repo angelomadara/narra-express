@@ -1,8 +1,8 @@
 import { Application } from 'express';
 import apiRoutes from './api';
-import earthquakeRoutes from './earthquake';
+import earthquakeRoutes from './earthquake.route';
 import weatherRoutes from './weather';
-import usersRoutes from './users';
+import usersRoutes from './users.route';
 
 export const registerRoutes = (app: Application) => {
   // Register all routes here
