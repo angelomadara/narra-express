@@ -13,7 +13,8 @@ export const databaseConfig: DataSourceOptions = {
   database: process.env.DB_NAME || 'earthquake_db',
   entities: ["src/models/*.ts"],
   synchronize: process.env.NODE_ENV === 'development', // Only in development!
-  logging: process.env.NODE_ENV === 'development',
+  // logging: process.env.NODE_ENV === 'development',
+  logging: process.env.NODE_ENV === 'development' ? ['error','schema'] : false,
   extra: {
     connectionLimit: 10,
   }
