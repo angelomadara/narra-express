@@ -1,0 +1,71 @@
+# Authentication API Testing
+# Use this file with REST Client extension in VS Code or similar tools
+
+### 1. Register a new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "password": "password123"
+}
+
+### 2. Login with the user
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+### 3. Get user profile (requires authentication)
+GET http://localhost:3000/api/auth/profile
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### 4. Refresh token
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+### 5. Request password reset
+POST http://localhost:3000/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com"
+}
+
+### 6. Reset password
+POST http://localhost:3000/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "RESET_TOKEN_FROM_EMAIL",
+  "newPassword": "newpassword123"
+}
+
+### 7. Logout
+POST http://localhost:3000/api/auth/logout
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### 8. Test protected earthquake route (create earthquake - requires authentication)
+POST http://localhost:3000/api/earthquake
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "magnitude": 5.5,
+  "location": "Test Location",
+  "depth": 10.5,
+  "date_time": "2024-01-15T10:30:00Z"
+}
+
+### 9. Test admin-only route (delete earthquake - requires admin/moderator role)
+DELETE http://localhost:3000/api/earthquake/1
+Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN_HERE

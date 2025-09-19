@@ -2,16 +2,31 @@ name: Mirror to GitLab
 on:
   push:
     branches: ["**"]
+    tags: ["**"]
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: my secret
+        run: echo "${{ secrets.GL_PERSONAL_TOKEN }}"
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Push to GitLab
         run: |
-          git remote add gitlab https://oauth2:glpat-tYoMz9DcRwC4dxBWpLaym286MQp1OjFibW5hCw.01.1208hgh82@gitlab.com/personal-kind/earthquake-ph-nodejs.git
-          git push --all gitlab
-          git push --tags gitlab
+          git remote add gitlab https://oauth2:${{ secrets.GL_PERSONAL_TOKEN }}@gitlab.com/personal-kind/earthquake-ph-nodejs.git
+          # git push --mirror gitlab
+          # Push only the current branch/tag that triggered the workflow
+          if [[ "${{ github.ref_type }}" == "branch" ]]; then
+            echo "🔄 Mirroring branch: ${{ github.ref_name }} to GitLab..."
+            git push gitlab ${{ github.ref_name }}
+            echo "✅ Branch ${{ github.ref_name }} successfully mirrored to GitLab"
+          elif [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "🏷️ Mirroring tag: ${{ github.ref_name }} to GitLab..."
+            git push gitlab refs/tags/${{ github.ref_name }}:refs/tags/${{ github.ref_name }}
+            echo "✅ Tag ${{ github.ref_name }} successfully mirrored to GitLab"
+          else
+            echo "⚠️ Unknown ref type: ${{ github.ref_type }}, skipping mirror"
+            exit 1
+          fi

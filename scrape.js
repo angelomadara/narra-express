@@ -2,7 +2,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const https = require("https");
 
-const url = "https://earthquake.phivolcs.dost.gov.ph";
+const url = "https://earthquake.phivolcs.dost.gov.ph/EQLatest-Monthly/2017/2017_January.html";
 
 const agent = new https.Agent({
   rejectUnauthorized: false,
