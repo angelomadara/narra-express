@@ -12,6 +12,9 @@ class EarthquakeController {
     this.createEarthquake = this.createEarthquake.bind(this);
     this.getAllEarthquakes = this.getAllEarthquakes.bind(this);
     this.getEarthquakeById = this.getEarthquakeById.bind(this);
+    this.updateEarthquake = this.updateEarthquake.bind(this);
+    this.deleteEarthquake = this.deleteEarthquake.bind(this);
+    this.getEarthquakeStats = this.getEarthquakeStats.bind(this)
     // ... bind all methods
   }
 

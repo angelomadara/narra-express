@@ -1,34 +1,45 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity('users') // This will create a 'users' table
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  email: string;
+  @Column({ unique: true })
+  email!: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  firstName: string;
+  @Column()
+  firstName!: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  lastName: string;
+  @Column()
+  lastName!: string;
 
-  @Column({ type: 'varchar', length: 255 })
-  password: string;
+  @Column()
+  password!: string;
 
-  @Column({ type: 'varchar', length: 20 })
-  phone: string;
+  @Column({ type: 'enum', enum: ['admin', 'moderator', 'user'], default: 'user' })
+  role!: 'admin' | 'moderator' | 'user';
 
-  @Column({ type: 'datetime' })
-  birthDate: Date;
+  @Column({ default: true })
+  isActive!: boolean;
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+  @Column({ default: false })
+  emailVerified!: boolean;
+
+  // Refresh token storage
+  @Column({ type: 'text', nullable: true })
+  refreshToken?: string;
+
+  // Password reset
+  @Column({ nullable: true })
+  resetPasswordToken?: string;
+
+  @Column({ type: 'datetime', nullable: true })
+  resetPasswordExpires?: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }
