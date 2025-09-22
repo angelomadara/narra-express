@@ -1,0 +1,15 @@
+stages:
+  - test-build
+
+test-build:
+  stage: test-build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "dev"
+  allow_failure: false # Explicitly prevent merge if this job fails
+  before_script:
+    # - echo "registry=https://registry.npmjs.org/" > .npmrc
+    # - echo "@your-private-scope:registry=http://nexus.aique.cloud/repository/npm-group/" >> .npmrc
+    # - echo "@jridgewell:registry=https://registry.npmjs.org/" >> .npmrc
+    - npm clean-install
+  script:
+    - npm run build
