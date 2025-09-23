@@ -1,0 +1,39 @@
+# Test Earthquake API Endpoints
+
+### Get all earthquakes
+GET http://localhost:3000/api/earthquakes
+
+### Get earthquake by ID
+GET http://localhost:3000/api/earthquakes/1
+
+### Get earthquake statistics
+GET http://localhost:3000/api/earthquakes/stats
+
+### Create new earthquake
+POST http://localhost:3000/api/earthquakes
+Content-Type: application/json
+
+{
+  "magnitude": 4.5,
+  "location": "Cebu",
+  "depth": 12.3,
+  "date_time": "2024-01-20 10:30:00",
+  "latitude": 10.3157,
+  "longitude": 123.8854,
+  "source": "PHIVOLCS"
+}
+
+### Update earthquake
+PUT http://localhost:3000/api/earthquakes/1
+Content-Type: application/json
+
+{
+  "magnitude": 5.5,
+  "location": "Updated Batangas"
+}
+
+### Delete earthquake
+DELETE http://localhost:3000/api/earthquakes/4
+
+### Get earthquakes with filters
+GET http://localhost:3000/api/earthquakes?minMagnitude=5.0&location=Batangas&limit=5&page=1
