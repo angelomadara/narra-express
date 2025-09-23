@@ -25,13 +25,13 @@ class AuthController {
       const userData: RegisterDTO = req.body;
       
       // Basic validation
-      if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
-        res.status(400).json({
-          error: 'Validation failed',
-          message: 'Email, password, firstName, and lastName are required'
-        });
-        return;
-      }
+      // if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
+      //   res.status(400).json({
+      //     error: 'Validation failed',
+      //     message: 'Email, password, firstName, and lastName are required'
+      //   });
+      //   return;
+      // }
 
       // Password strength validation
       if (userData.password.length < 6) {
