@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { connectDB } from './config/database';
+import { corsOptions } from './config/cors';
 
 dotenv.config();
 
@@ -12,7 +13,7 @@ const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3000');
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions)); // <- apply cors config to all routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
