@@ -3,6 +3,7 @@ import authController from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth.middleware';
 import rateLimit from 'express-rate-limit';
 import { generalAuthLimiter, userBasedLimiter } from '../utils/rate-limiter';
+import { verifyCSRFJWT } from '../middleware/csrf-jwt.middleware';
 
 const router: Router = express.Router();
 
@@ -24,15 +25,15 @@ const passwordResetLimiter = rateLimit({
   message: 'Too many password reset attempts, please try again later.',
 });
 
-// Public routes (no authentication required)
-router.post('/register',generalAuthLimiter, authController.register);
-router.post('/login', loginLimiter, authController.login);
-router.post('/refresh', authController.refreshToken);
-router.post('/forgot-password', passwordResetLimiter, authController.forgotPassword);
-router.post('/reset-password', passwordResetLimiter, authController.resetPassword);
+// Public routes (no authentication required) - with CSRF protection
+router.post('/register', generalAuthLimiter, verifyCSRFJWT, authController.register);
+router.post('/login', loginLimiter, verifyCSRFJWT, authController.login);
+router.post('/refresh', verifyCSRFJWT, authController.refreshToken);
+router.post('/forgot-password', passwordResetLimiter, verifyCSRFJWT, authController.forgotPassword);
+router.post('/reset-password', passwordResetLimiter, verifyCSRFJWT, authController.resetPassword);
 
-// Protected routes (authentication required)
-router.post('/logout', authenticate, authController.logout);
-router.get('/profile', userBasedLimiter,authenticate, authController.getProfile);
+// Protected routes (authentication required) - with CSRF protection
+router.post('/logout', authenticate, verifyCSRFJWT, authController.logout);
+router.get('/profile', userBasedLimiter, authenticate, authController.getProfile);
 
 export default router;
