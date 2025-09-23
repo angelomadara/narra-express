@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 import express, { Application, Request, Response, NextFunction } from 'express';
+import helmet from 'helmet';
+import xssClean from 'xss-clean';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/database';
@@ -12,6 +14,7 @@ const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3000');
 
 // Middleware
+app.use(helmet()); // Set security-related HTTP headers
 app.use(cors(corsOptions)); // <- apply cors config to all routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
