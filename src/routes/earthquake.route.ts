@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import earthquakeController from '../controllers/earthquake.controller';
-import { authenticate, requirePermission } from '../middleware';
+import { authenticate, authorize, requirePermission } from '../middleware';
 // import { authenticate, authorize, requirePermission } from '../middleware/auth.middleware';
 
 const router: Router = express.Router();
