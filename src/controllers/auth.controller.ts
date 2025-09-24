@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RegisterDTO, LoginDTO, ResetPasswordDTO } from '../dto/register.dto';
+import { validationResult } from 'express-validator';
+import { validateRequest } from '../utils/validateRequest';
 
 class AuthController {
   private authService: AuthService;
@@ -21,36 +23,33 @@ class AuthController {
    * User Registration
    */
   async register(req: Request, res: Response): Promise<void> {
+    console.log(req.body)
+    // Handle express-validator validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      // console.log(JSON.stringify(errors))
+      return validateRequest(res, errors.array());
+      // res.status(400).json({
+      //   error: 'Validation failed',
+      //   message: 'Invalid input',
+      //   errors: errors
+      // });
+      // return;
+    }
+   
+  
     try {
       const userData: RegisterDTO = req.body;
-      
-      // Basic validation
-      // if (!userData.email || !userData.password || !userData.firstName || !userData.lastName) {
-      //   res.status(400).json({
-      //     error: 'Validation failed',
-      //     message: 'Email, password, firstName, and lastName are required'
-      //   });
-      //   return;
-      // }
-
-      // Password strength validation
-      if (userData.password.length < 6) {
-        res.status(400).json({
-          error: 'Validation failed',
-          message: 'Password must be at least 6 characters long'
-        });
-        return;
-      }
 
       const result = await this.authService.register(userData);
-      
+
       res.status(201).json({
         message: 'User registered successfully',
         data: result
       });
     } catch (error) {
       console.error('Registration error:', error);
-      
+
       if (error instanceof Error && error.message === 'User already exists with this email') {
         res.status(409).json({
           error: 'Registration failed',
