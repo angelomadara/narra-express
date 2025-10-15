@@ -1,21 +1,14 @@
 import { Request, Response } from 'express';
 import { EarthquakeService } from '../services/earthquake.service';
 import { CreateEarthquakeDTO, UpdateEarthquakeDTO, EarthquakeQueryDTO } from '../dto/earthquake.dto';
+import { BaseController } from './base.controller';
 
-class EarthquakeController {
+class EarthquakeController extends BaseController {
   private earthquakeService: EarthquakeService;
 
   constructor() {
+    super(); // Call base controller constructor for method binding
     this.earthquakeService = new EarthquakeService();
-
-    // Bind all methods in constructor
-    this.createEarthquake = this.createEarthquake.bind(this);
-    this.getAllEarthquakes = this.getAllEarthquakes.bind(this);
-    this.getEarthquakeById = this.getEarthquakeById.bind(this);
-    this.updateEarthquake = this.updateEarthquake.bind(this);
-    this.deleteEarthquake = this.deleteEarthquake.bind(this);
-    this.getEarthquakeStats = this.getEarthquakeStats.bind(this)
-    // ... bind all methods
   }
 
   /**
@@ -25,27 +18,16 @@ class EarthquakeController {
     try {
       const earthquakeData: CreateEarthquakeDTO = req.body;
       
-      // Basic validation
-      if (!earthquakeData.magnitude || !earthquakeData.location || !earthquakeData.depth || !earthquakeData.date_time) {
-        res.status(400).json({
-          error: 'Missing required fields',
-          message: 'magnitude, location, depth, and date_time are required'
-        });
+      // Validate required fields
+      if (!this.validateRequiredFields(req, res, ['magnitude', 'location', 'depth', 'date_time'])) {
         return;
       }
 
       const earthquake = await this.earthquakeService.createEarthquake(earthquakeData);
       
-      res.status(201).json({
-        message: 'Earthquake record created successfully',
-        data: earthquake
-      });
+      this.sendSuccessResponse(res, 201, 'Earthquake record created successfully', earthquake);
     } catch (error) {
-      console.error('Create earthquake error:', error);
-      res.status(500).json({
-        error: 'Failed to create earthquake record',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Create earthquake');
     }
   }
 
@@ -55,9 +37,7 @@ class EarthquakeController {
   async getAllEarthquakes(req: Request, res: Response): Promise<void> {
     try {
       const query: EarthquakeQueryDTO = req.query;
-      const page = parseInt(query.page || '1');
-      const limit = parseInt(query.limit || '10');
-      const offset = (page - 1) * limit;
+      const { page, limit, offset } = this.parsePagination(req);
 
       const filters = {
         minMagnitude: query.minMagnitude ? parseFloat(query.minMagnitude) : undefined,
@@ -74,22 +54,11 @@ class EarthquakeController {
         this.earthquakeService.getEarthquakeCount(filters)
       ]);
 
-      res.json({
-        message: 'Earthquakes retrieved successfully',
-        data: earthquakes,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit)
-        }
-      });
+      const pagination = this.createPagination(page, limit, total);
+      
+      this.sendSuccessResponse(res, 200, 'Earthquakes retrieved successfully', earthquakes, pagination);
     } catch (error) {
-      console.error('Get earthquakes error:', error);
-      res.status(500).json({
-        error: 'Failed to retrieve earthquakes',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Get earthquakes');
     }
   }
 
@@ -98,37 +67,14 @@ class EarthquakeController {
    */
   async getEarthquakeById(req: Request, res: Response): Promise<void> {
     try {
-      const id = parseInt(req.params.id);
-      
-      if (isNaN(id)) {
-        res.status(400).json({
-          error: 'Invalid ID',
-          message: 'ID must be a valid number'
-        });
-        return;
-      }
+      const id = this.validateId(req, res);
+      if (id === null) return;
 
       const earthquake = await this.earthquakeService.getEarthquakeById(id);
       
-      res.json({
-        message: 'Earthquake retrieved successfully',
-        data: earthquake
-      });
+      this.sendSuccessResponse(res, 200, 'Earthquake retrieved successfully', earthquake);
     } catch (error) {
-      console.error('Get earthquake by ID error:', error);
-      
-      if (error instanceof Error && error.message === 'Earthquake not found') {
-        res.status(404).json({
-          error: 'Earthquake not found',
-          message: `No earthquake found with ID ${req.params.id}`
-        });
-        return;
-      }
-
-      res.status(500).json({
-        error: 'Failed to retrieve earthquake',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Get earthquake by ID');
     }
   }
 
@@ -137,38 +83,16 @@ class EarthquakeController {
    */
   async updateEarthquake(req: Request, res: Response): Promise<void> {
     try {
-      const id = parseInt(req.params.id);
-      const updateData: UpdateEarthquakeDTO = req.body;
+      const id = this.validateId(req, res);
+      if (id === null) return;
       
-      if (isNaN(id)) {
-        res.status(400).json({
-          error: 'Invalid ID',
-          message: 'ID must be a valid number'
-        });
-        return;
-      }
+      const updateData: UpdateEarthquakeDTO = req.body;
 
       const earthquake = await this.earthquakeService.updateEarthquake(id, updateData);
       
-      res.json({
-        message: 'Earthquake updated successfully',
-        data: earthquake
-      });
+      this.sendSuccessResponse(res, 200, 'Earthquake updated successfully', earthquake);
     } catch (error) {
-      console.error('Update earthquake error:', error);
-      
-      if (error instanceof Error && error.message === 'Earthquake not found') {
-        res.status(404).json({
-          error: 'Earthquake not found',
-          message: `No earthquake found with ID ${req.params.id}`
-        });
-        return;
-      }
-
-      res.status(500).json({
-        error: 'Failed to update earthquake',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Update earthquake');
     }
   }
 
@@ -177,36 +101,14 @@ class EarthquakeController {
    */
   async deleteEarthquake(req: Request, res: Response): Promise<void> {
     try {
-      const id = parseInt(req.params.id);
-      
-      if (isNaN(id)) {
-        res.status(400).json({
-          error: 'Invalid ID',
-          message: 'ID must be a valid number'
-        });
-        return;
-      }
+      const id = this.validateId(req, res);
+      if (id === null) return;
 
       await this.earthquakeService.deleteEarthquake(id);
       
-      res.json({
-        message: 'Earthquake deleted successfully'
-      });
+      this.sendSuccessResponse(res, 200, 'Earthquake deleted successfully');
     } catch (error) {
-      console.error('Delete earthquake error:', error);
-      
-      if (error instanceof Error && error.message === 'Earthquake not found') {
-        res.status(404).json({
-          error: 'Earthquake not found',
-          message: `No earthquake found with ID ${req.params.id}`
-        });
-        return;
-      }
-
-      res.status(500).json({
-        error: 'Failed to delete earthquake',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Delete earthquake');
     }
   }
 
@@ -218,10 +120,7 @@ class EarthquakeController {
       const earthquakes = await this.earthquakeService.getAllEarthquakes();
       
       if (earthquakes.length === 0) {
-        res.json({
-          message: 'No earthquake data available',
-          stats: null
-        });
+        this.sendSuccessResponse(res, 200, 'No earthquake data available', null);
         return;
       }
 
@@ -241,17 +140,15 @@ class EarthquakeController {
         }).length
       };
 
-      res.json({
-        message: 'Earthquake statistics retrieved successfully',
-        stats,
-        timestamp: new Date().toISOString()
-      });
+      this.sendSuccessResponse(
+        res, 
+        200, 
+        'Earthquake statistics retrieved successfully', 
+        stats, 
+        { timestamp: new Date().toISOString() }
+      );
     } catch (error) {
-      console.error('Get earthquake stats error:', error);
-      res.status(500).json({
-        error: 'Failed to retrieve earthquake statistics',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Get earthquake stats');
     }
   }
 }
