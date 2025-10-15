@@ -1,10 +1,10 @@
 import express, { Router } from 'express';
-import { getUsers } from '../controllers/user.controller';
+import userController from '../controllers/user.controller';
 
 
 const router: Router = express.Router();
 
-// CRUD Operations - Bind methods to preserve 'this' context
-router.get('/', getUsers);
+// CRUD Operations - Methods are automatically bound via BaseController
+router.get('/', userController.getUsers);
 
 export default router;
