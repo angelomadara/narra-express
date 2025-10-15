@@ -242,4 +242,15 @@ export class AuthService {
       throw new Error('Invalid access token');
     }
   }
+
+  // Get user by ID
+  async getUserById(userId: number): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      return null;
+    }
+    // Exclude sensitive fields
+    const { password, refreshToken, resetPasswordToken, resetPasswordExpires, ...safeUser } = user;
+    return safeUser as User;
+  }
 }
