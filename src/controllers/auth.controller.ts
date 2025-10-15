@@ -1,67 +1,41 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RegisterDTO, LoginDTO, ResetPasswordDTO } from '../dto/register.dto';
-import { validationResult } from 'express-validator';
-import { validateRequest } from '../utils/validateRequest';
+import { BaseController } from './base.controller';
 
-class AuthController {
+class AuthController extends BaseController {
   private authService: AuthService;
 
   constructor() {
+    super(); // Call base controller constructor for method binding
     this.authService = new AuthService();
-
-    this.register = this.register.bind(this);
-    this.login = this.login.bind(this);
-    this.refreshToken = this.refreshToken.bind(this);
-    this.logout = this.logout.bind(this);
-    this.getProfile = this.getProfile.bind(this);
-    this.forgotPassword = this.forgotPassword.bind(this);
-    this.resetPassword = this.resetPassword.bind(this);
   }
 
   /**
    * User Registration
    */
   async register(req: Request, res: Response): Promise<void> {
-    console.log(req.body)
+    console.log(req.body);
+    
     // Handle express-validator validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // console.log(JSON.stringify(errors))
-      return validateRequest(res, errors.array());
-      // res.status(400).json({
-      //   error: 'Validation failed',
-      //   message: 'Invalid input',
-      //   errors: errors
-      // });
-      // return;
+    if (!this.validateRequest(req, res)) {
+      return;
     }
    
-  
     try {
       const userData: RegisterDTO = req.body;
 
       const result = await this.authService.register(userData);
 
-      res.status(201).json({
-        message: 'User registered successfully',
-        data: result
-      });
+      this.sendSuccessResponse(res, 201, 'User registered successfully', result);
     } catch (error) {
-      console.error('Registration error:', error);
-
+      // Handle specific registration errors
       if (error instanceof Error && error.message === 'User already exists with this email') {
-        res.status(409).json({
-          error: 'Registration failed',
-          message: error.message
-        });
+        this.sendErrorResponse(res, 409, 'Registration failed', error.message);
         return;
       }
 
-      res.status(500).json({
-        error: 'Registration failed',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Registration');
     }
   }
 
@@ -72,37 +46,23 @@ class AuthController {
     try {
       const { email, password }: LoginDTO = req.body;
       
-      // Basic validation
-      if (!email || !password) {
-        res.status(400).json({
-          error: 'Validation failed',
-          message: 'Email and password are required'
-        });
+      // Validate required fields
+      if (!this.validateRequiredFields(req, res, ['email', 'password'])) {
         return;
       }
 
       const result = await this.authService.login(email, password);
       
-      res.json({
-        message: 'Login successful',
-        data: result
-      });
+      this.sendSuccessResponse(res, 200, 'Login successful', result);
     } catch (error) {
-      console.error('Login error:', error);
-      
+      // Handle specific login errors
       if (error instanceof Error && 
           (error.message === 'Invalid credentials' || error.message === 'Account is deactivated')) {
-        res.status(401).json({
-          error: 'Authentication failed',
-          message: error.message
-        });
+        this.sendErrorResponse(res, 401, 'Authentication failed', error.message);
         return;
       }
 
-      res.status(500).json({
-        error: 'Login failed',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.handleError(error, res, 'Login');
     }
   }
 
@@ -113,27 +73,15 @@ class AuthController {
     try {
       const { refreshToken } = req.body;
       
-      if (!refreshToken) {
-        res.status(400).json({
-          error: 'Validation failed',
-          message: 'Refresh token is required'
-        });
+      if (!this.validateRequiredFields(req, res, ['refreshToken'])) {
         return;
       }
 
       const result = await this.authService.refreshToken(refreshToken);
       
-      res.json({
-        message: 'Token refreshed successfully',
-        data: result
-      });
+      this.sendSuccessResponse(res, 200, 'Token refreshed successfully', result);
     } catch (error) {
-      console.error('Token refresh error:', error);
-      
-      res.status(401).json({
-        error: 'Token refresh failed',
-        message: 'Invalid refresh token'
-      });
+      this.sendErrorResponse(res, 401, 'Token refresh failed', 'Invalid refresh token');
     }
   }
 
@@ -178,14 +126,12 @@ class AuthController {
         return;
       }
 
-      // You might want to fetch fresh user data from database
+      // query the user information in the database
+      const profile = await this.authService.getUserById(req.user.userId);
+
       res.json({
         message: 'Profile retrieved successfully',
-        data: {
-          userId: req.user.userId,
-          email: req.user.email,
-          role: req.user.role
-        }
+        data: profile
       });
     } catch (error) {
       console.error('Get profile error:', error);

@@ -19,7 +19,7 @@ npm version major
 
 
 ### Create a 256-bit key 
-This will be use in the .env file for the jwt tokens
+To create a random 256-bit key for JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, and CSRF_JWT_SECRET, you can use the following command in a Node.js environment:
 ```
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
