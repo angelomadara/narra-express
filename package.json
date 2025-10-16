@@ -8,7 +8,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "dev:build": "tsc --watch",
-    "setup-db": "node scripts/setup-db.js"
+    "setup-db": "node scripts/setup-db.ts"
   },
   "dependencies": {
     "axios": "^1.7.7",
