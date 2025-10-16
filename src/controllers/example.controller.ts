@@ -3,7 +3,7 @@ import { EarthquakeService } from '../services/earthquake.service';
 import { CreateEarthquakeDTO, UpdateEarthquakeDTO, EarthquakeQueryDTO } from '../dto/earthquake.dto';
 import { BaseController } from './base.controller';
 
-class EarthquakeController extends BaseController {
+class ExampleController extends BaseController {
   private earthquakeService: EarthquakeService;
 
   constructor() {
@@ -153,4 +153,4 @@ class EarthquakeController extends BaseController {
   }
 }
 
-export default new EarthquakeController();
+export default new ExampleController();
