@@ -89,8 +89,63 @@ class Logger {
     return logObject;
   }
 
+  private cleanupOldLogs() {
+    try {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - 60); // 60 days ago
+
+      // Clean general log files
+      this.cleanupDirectory(this.logDir, cutoffDate);
+
+      // Clean level-specific log files
+      const levelsDir = path.join(this.logDir, "levels");
+      if (fs.existsSync(levelsDir)) {
+        const levelDirs = fs.readdirSync(levelsDir);
+        levelDirs.forEach(levelDir => {
+          const levelPath = path.join(levelsDir, levelDir);
+          if (fs.statSync(levelPath).isDirectory()) {
+            this.cleanupDirectory(levelPath, cutoffDate);
+          }
+        });
+      }
+    } catch (error) {
+      console.error("Error during log cleanup:", error);
+    }
+  }
+
+  private cleanupDirectory(dirPath: string, cutoffDate: Date) {
+    try {
+      const files = fs.readdirSync(dirPath);
+      
+      files.forEach(file => {
+        const filePath = path.join(dirPath, file);
+        const stats = fs.statSync(filePath);
+        
+        // Only process .json files and skip directories
+        if (stats.isFile() && file.endsWith('.json')) {
+          // Extract date from filename (YYYY-MM-DD.json format)
+          const dateMatch = file.match(/^(\d{4}-\d{2}-\d{2})\.json$/);
+          if (dateMatch) {
+            const fileDate = new Date(dateMatch[1]);
+            if (fileDate < cutoffDate) {
+              fs.unlinkSync(filePath);
+              console.log(`Deleted old log file: ${filePath}`);
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error(`Error cleaning directory ${dirPath}:`, error);
+    }
+  }
+
   writeLog({level, message, data = null}: methodParams) {
     try {
+      // 1% probability to trigger cleanup
+      if (Math.random() < 0.01) {
+        this.cleanupOldLogs();
+      }
+
       // Write to level-specific file
       const levelLogFilePath = this.getLogFilePath(level);
       // Also write to general log file
