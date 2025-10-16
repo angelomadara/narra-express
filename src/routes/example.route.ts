@@ -8,6 +8,9 @@ const router: Router = express.Router();
 // Public routes (no authentication required)
 router.get('/', ExampleController.getAllEarthquakes);
 router.get('/stats', ExampleController.getEarthquakeStats);
+
+router.get('/logs', ExampleController.getTestLogging);
+
 router.get('/:id', ExampleController.getEarthquakeById);
 
 // Protected routes (authentication required)
