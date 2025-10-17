@@ -7,7 +7,7 @@ export class JWTCSRFProtection {
   /**
    * Generate CSRF token embedded in JWT
    */
-  static generateCSRFJWT(userId?: number): string {
+  static generateCSRFJWT(userId?: number | string): string {
     const secret = process.env.CSRF_JWT_SECRET || 'csrf-secret-key';
     const nonce = crypto.randomBytes(16).toString('hex');
     
@@ -24,7 +24,7 @@ export class JWTCSRFProtection {
   /**
    * Verify CSRF JWT token
    */
-  static verifyCSRFJWT(token: string, userId?: number): boolean {
+  static verifyCSRFJWT(token: string, userId?: number | string): boolean {
     try {
       const secret = process.env.CSRF_JWT_SECRET || 'csrf-secret-key';
       const decoded = jwt.verify(token, secret) as any;
