@@ -1,4 +1,5 @@
 import { IsEmail, IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import { ObjectId } from 'typeorm';
 
 export class RegisterDTO {
   @IsEmail({}, { message: 'Please provide a valid email address' })
@@ -39,7 +40,7 @@ export class LoginDTO {
 
 export interface AuthResponse {
   user: {
-    id: number;
+    id: ObjectId | number;
     email: string;
     firstName: string;
     lastName: string;
