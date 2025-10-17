@@ -1,9 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn, ObjectId } from 'typeorm';
+
+const isDatabaseMongoDB = () => {
+  return process.env.DB_TYPE === 'mongodb';
+}
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @(isDatabaseMongoDB() ? ObjectIdColumn() : PrimaryGeneratedColumn())
+  id!: ObjectId | number;
+
+  // Add an alias for MongoDB compatibility
+  get _id() {
+    return isDatabaseMongoDB() ? this.id : undefined;
+  }
 
   @Column({ unique: true })
   email!: string;

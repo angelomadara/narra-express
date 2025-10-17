@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RegisterDTO, LoginDTO, ResetPasswordDTO } from '../dto/register.dto';
 import { BaseController } from './base.controller';
+import log from '../services/log.service';
 
 class AuthController extends BaseController {
   private authService: AuthService;
@@ -98,7 +99,8 @@ class AuthController extends BaseController {
         return;
       }
 
-      await this.authService.logout(req.user.userId);
+      // Ensure userId is a number to match AuthService.logout signature
+      await this.authService.logout(Number(req.user.userId));
       
       res.json({
         message: 'Logout successful'
@@ -117,6 +119,8 @@ class AuthController extends BaseController {
    * Get Current User Profile
    */
   async getProfile(req: Request, res: Response): Promise<void> {
+
+    log.info("Fetching profile for user", { userId: req.user });
     try {
       if (!req.user) {
         res.status(401).json({
@@ -127,14 +131,15 @@ class AuthController extends BaseController {
       }
 
       // query the user information in the database
-      const profile = await this.authService.getUserById(req.user.userId);
+      const profile = await this.authService.getUserById(String(req.user.userId));
 
       res.json({
         message: 'Profile retrieved successfully',
         data: profile
       });
     } catch (error) {
-      console.error('Get profile error:', error);
+      log.info("getProfile Request", req);
+      log.error('Get profile error:', error);
       
       res.status(500).json({
         error: 'Failed to get profile',

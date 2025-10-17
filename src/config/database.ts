@@ -1,35 +1,36 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
+import { MySQLDataSource, connectMySQL } from './mysql';
+import { MongoDataSource, connectMongoDB } from './mongodb';
 
 dotenv.config();
 
-// TypeORM configuration
-export const databaseConfig: DataSourceOptions = {
-  type: "mysql",
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306'),
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '12345678',
-  database: process.env.DB_NAME || 'earthquake_db',
-  entities: ["src/models/*.ts"],
-  synchronize: process.env.NODE_ENV === 'development', // Only in development!
-  // logging: process.env.NODE_ENV === 'development',
-  logging: process.env.NODE_ENV === 'development' ? ['error','schema'] : false,
-  extra: {
-    connectionLimit: 10,
-  }
-};
+// Database type from environment
+const DB_TYPE = process.env.DB_TYPE || 'mysql';
 
-// Create DataSource instance
-export const AppDataSource = new DataSource(databaseConfig);
+// Export the appropriate DataSource based on DB_TYPE
+export const AppDataSource: DataSource = DB_TYPE === 'mongodb' ? MongoDataSource : MySQLDataSource;
 
-// Connection function
-export const connectDB = async () => {
+// Universal connection function that switches based on DB_TYPE
+export const connectDB = async (): Promise<DataSource> => {
   try {
-    await AppDataSource.initialize();
-    console.log('✅ TypeORM MySQL Database connected successfully');
+    let dataSource: DataSource;
+    
+    if (DB_TYPE === 'mongodb') {
+      dataSource = await connectMongoDB();
+    } else if (DB_TYPE === 'mysql') {
+      dataSource = await connectMySQL();
+    } else {
+      throw new Error(`Unsupported database type: ${DB_TYPE}. Supported types: mysql, mongodb`);
+    }
+    
+    return dataSource;
   } catch (error) {
     console.error('❌ Database connection failed:', error);
     process.exit(1);
   }
 };
+
+// Export individual configurations and connections for direct access if needed
+export { MySQLDataSource, connectMySQL } from './mysql';
+export { MongoDataSource, connectMongoDB } from './mongodb';

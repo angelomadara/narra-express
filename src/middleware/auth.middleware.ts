@@ -1,19 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 
-// Extend Request interface to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        userId: number;
-        email: string;
-        role: string;
-      };
-    }
-  }
-}
-
 const authService = new AuthService();
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {

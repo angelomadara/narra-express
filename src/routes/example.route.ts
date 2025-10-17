@@ -6,31 +6,27 @@ import { authenticate, authorize, requirePermission } from '../middleware';
 const router: Router = express.Router();
 
 // Public routes (no authentication required)
-router.get('/', ExampleController.getAllEarthquakes);
-router.get('/stats', ExampleController.getEarthquakeStats);
 
 router.get('/logs', ExampleController.getTestLogging);
-
-router.get('/:id', ExampleController.getEarthquakeById);
 
 // Protected routes (authentication required)
 router.post('/', 
   authenticate, 
-  requirePermission('write:earthquakes'), 
-  ExampleController.createEarthquake
+  requirePermission('write:example'), 
+  ExampleController.createExample
 );
 
 router.put('/:id', 
   authenticate, 
-  requirePermission('write:earthquakes'), 
-  ExampleController.updateEarthquake
+  requirePermission('write:example'), 
+  ExampleController.updateExample
 );
 
 // Admin/Moderator only routes
 router.delete('/:id', 
   authenticate, 
   authorize('admin', 'moderator'), 
-  ExampleController.deleteEarthquake
+  ExampleController.deleteExample
 );
 
 export default router;
