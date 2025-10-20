@@ -1,7 +1,8 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import dotenv from 'dotenv';
+import log from '../services/log.service';
 
-dotenv.config();
+dotenv.config(); // sometimes the .env variables are not loaded
 
 // MySQL TypeORM configuration
 export const mysqlConfig: DataSourceOptions = {
@@ -26,10 +27,10 @@ export const MySQLDataSource = new DataSource(mysqlConfig);
 export const connectMySQL = async () => {
   try {
     await MySQLDataSource.initialize();
-    console.log('✅ TypeORM MySQL Database connected successfully');
+    log.info('✅ TypeORM MySQL Database connected successfully');
     return MySQLDataSource;
   } catch (error) {
-    console.error('❌ MySQL Database connection failed:', error);
+    log.error('❌ MySQL Database connection failed:', error);
     throw error;
   }
 };

@@ -1,7 +1,8 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import dotenv from 'dotenv';
+import log from '../services/log.service';
 
-dotenv.config();
+dotenv.config(); // sometimes the .env variables are not loaded
 
 // MongoDB TypeORM configuration
 export const mongodbConfig: DataSourceOptions = {
@@ -25,10 +26,10 @@ export const MongoDataSource = new DataSource(mongodbConfig);
 export const connectMongoDB = async () => {
   try {
     await MongoDataSource.initialize();
-    console.log('✅ TypeORM MongoDB Database connected successfully');
+    log.info('✅ TypeORM MongoDB Database connected successfully');
     return MongoDataSource;
   } catch (error) {
-    console.error('❌ MongoDB Database connection failed:', error);
+    log.error('❌ MongoDB Database connection failed:', error);
     throw error;
   }
 };

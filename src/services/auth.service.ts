@@ -163,13 +163,13 @@ export class AuthService {
   }
 
   // Password Reset Request
-  async requestPasswordReset(email: string): Promise<void> {
+  async requestPasswordReset(email: string): Promise<boolean> {
     // 1. Find user
     const user = await this.userRepository.findOne({ where: { email } });
     
     if (!user) {
       // Don't reveal if email exists or not for security
-      return;
+      return false;
     }
 
     // 2. Generate reset token
@@ -184,7 +184,9 @@ export class AuthService {
 
     // 4. Send reset email (implement email service)
     // await this.emailService.sendPasswordResetEmail(user.email, resetToken);
-    console.log(`Password reset token for ${email}: ${resetToken}`);
+    log.info(`Password reset token for ${email}: ${resetToken}`);
+
+    return true;
   }
 
   // Password Reset Confirm
