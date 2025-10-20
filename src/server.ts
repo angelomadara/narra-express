@@ -47,11 +47,12 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Import and register routes
 import { registerRoutes } from './routes';
+import log from './services/log.service';
 registerRoutes(app);
 
 // Error handling middleware
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err.stack);
+  log.error("Error occurred", err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
@@ -61,9 +62,9 @@ app.use('*', (req: Request, res: Response) => {
 });
 
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  
+  log.info(`Server is running on port ${PORT}`);
+  log.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+
   // Initialize database connection
   await connectDB();
 });
