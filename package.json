@@ -2,12 +2,19 @@
   "name": "narra-express",
   "version": "1.1.0",
   "description": "Express.js backend API with TypeScript",
-  "main": "dist/server.js",
-  "types": "dist/server.d.ts",
+  "main": "src/server.ts",
   "files": [
-    "dist/**/*",
+    "src/**/*",
+    "scripts/**/*",
+    "database/**/*",
+    "docs/**/*",
+    "http/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "tsconfig.json",
+    "nodemon.json",
+    "package.json",
+    ".env.example"
   ],
   "keywords": [
     "express",
@@ -32,8 +39,8 @@
     "dev": "nodemon src/server.ts",
     "dev:build": "tsc --watch",
     "setup-db": "node scripts/setup-db.ts",
-    "prepublishOnly": "npm run build",
-    "preversion": "npm run build",
+    "prepublishOnly": "echo 'Publishing MVC source code structure'",
+    "preversion": "echo 'Preparing version for MVC framework'",
     "postversion": "git push && git push --tags"
   },
   "dependencies": {
