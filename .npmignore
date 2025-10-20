@@ -1,0 +1,67 @@
+# Source files
+src/
+scripts/
+*.ts
+!*.d.ts
+
+# Development files
+nodemon.json
+tsconfig.json
+test-csrf.js
+
+# Environment and config
+.env
+.env.*
+
+# Documentation (keep README.md)
+docs/
+*.md
+!README.md
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# HTTP test files
+http/
+
+# Logs
+logs/
+*.log
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Database
+database/
+
+# Temporary files
+*.tmp
+*.temp
+coverage/
+.nyc_output/
