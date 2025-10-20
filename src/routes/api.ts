@@ -1,5 +1,6 @@
 import express, { Request, Response, Router } from 'express';
 import axios, { AxiosResponse } from 'axios';
+import log from '../services/log.service';
 
 const router: Router = express.Router();
 
@@ -32,7 +33,7 @@ router.get('/external-data', async (req: Request, res: Response<ExternalApiData 
     );
     res.json(response.data);
   } catch (error) {
-    console.error('External API error:', error);
+    log.error('External API error:', error);
     res.status(500).json({ error: 'Failed to fetch external data' });
   }
 });

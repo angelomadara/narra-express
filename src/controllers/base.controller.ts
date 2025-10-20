@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { validateRequest } from '../utils/validateRequest';
+import log from '../services/log.service';
 
 /**
  * Base Controller class with common functionality for all controllers
@@ -143,7 +144,7 @@ export abstract class BaseController {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     
     // Log error for debugging
-    console.error(`${context ? context + ' ' : ''}Error:`, error);
+    log.error(`${context ? context + ' ' : ''}Error:`, error);
     
     // Handle specific error types
     if (error instanceof Error) {

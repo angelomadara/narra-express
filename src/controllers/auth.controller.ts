@@ -16,7 +16,7 @@ class AuthController extends BaseController {
    * User Registration
    */
   async register(req: Request, res: Response): Promise<void> {
-    console.log(req.body);
+    log.info("User registration attempt", { body: req.body });
     
     // Handle express-validator validation errors
     if (!this.validateRequest(req, res)) {
@@ -106,7 +106,7 @@ class AuthController extends BaseController {
         message: 'Logout successful'
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      log.error('Logout error:', error);
       
       res.status(500).json({
         error: 'Logout failed',
@@ -163,14 +163,15 @@ class AuthController extends BaseController {
         return;
       }
 
-      await this.authService.requestPasswordReset(email);
+      const account = await this.authService.requestPasswordReset(email);
       
       // Always return success for security (don't reveal if email exists)
       res.json({
-        message: 'If an account with that email exists, a password reset link has been sent'
+        message: 'If an account with that email exists, a password reset link has been sent',
+        data: account 
       });
     } catch (error) {
-      console.error('Forgot password error:', error);
+      log.error('Forgot password error:', error);
       
       res.status(500).json({
         error: 'Password reset request failed',
@@ -208,7 +209,7 @@ class AuthController extends BaseController {
         message: 'Password reset successful'
       });
     } catch (error) {
-      console.error('Reset password error:', error);
+      log.error('Reset password error:', error);
       
       if (error instanceof Error && error.message === 'Invalid or expired reset token') {
         res.status(400).json({
