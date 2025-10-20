@@ -3,7 +3,11 @@
   "version": "1.1.1",
   "description": "Express.js backend API with TypeScript",
   "main": "src/server.ts",
+  "bin": {
+    "create-narra-app": "./bin/create-narra-app.js"
+  },
   "files": [
+    "bin/**/*",
     "src/**/*",
     "scripts/**/*",
     "database/**/*",
@@ -21,7 +25,12 @@
     "typescript",
     "api",
     "backend",
-    "nodejs"
+    "nodejs",
+    "boilerplate",
+    "template",
+    "scaffold",
+    "mvc",
+    "starter"
   ],
   "author": "Angelo Madara <angelomadara.dev@gmail.com>",
   "license": "MIT",
