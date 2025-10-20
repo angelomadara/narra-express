@@ -3,12 +3,38 @@
   "version": "1.0.0",
   "description": "Express.js backend API with TypeScript",
   "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "express",
+    "typescript",
+    "api",
+    "backend",
+    "nodejs"
+  ],
+  "author": "Angelo Madara <angelomadara.dev@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angelomadara/narra-express.git"
+  },
+  "bugs": {
+    "url": "https://github.com/angelomadara/narra-express/issues"
+  },
+  "homepage": "https://github.com/angelomadara/narra-express#readme",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
     "dev:build": "tsc --watch",
-    "setup-db": "node scripts/setup-db.ts"
+    "setup-db": "node scripts/setup-db.ts",
+    "prepublishOnly": "npm run build",
+    "preversion": "npm run build",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "@types/mongodb": "^4.0.6",
