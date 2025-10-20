@@ -43,7 +43,7 @@ jobs:
           fi
         continue-on-error: true
         
-      - name: Build project
+      - name: Validate TypeScript compilation
         run: npm run build
         
       - name: Run tests (if available)

@@ -1,22 +1,16 @@
-# Source files
-src/
-scripts/
-*.ts
-!*.d.ts
-
 # Development files
-nodemon.json
-tsconfig.json
 test-csrf.js
 
 # Environment and config
 .env
-.env.*
+.env.local
+.env.production
+.env.development
+# Keep .env.example for users
 
-# Documentation (keep README.md)
-docs/
-*.md
-!README.md
+# Keep all documentation
+# docs/ - keeping docs folder
+# *.md - keeping all markdown files
 
 # Test files
 test/
@@ -27,8 +21,8 @@ __tests__/
 *.spec.js
 *.spec.ts
 
-# HTTP test files
-http/
+# Keep HTTP test files as examples
+# http/ - keeping as example API calls
 
 # Logs
 logs/
@@ -57,8 +51,8 @@ Thumbs.db
 .travis.yml
 .circleci/
 
-# Database
-database/
+# Keep database schema and setup files
+# database/ - keeping as part of MVC framework
 
 # Temporary files
 *.tmp
