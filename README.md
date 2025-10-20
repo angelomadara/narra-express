@@ -1,4 +1,28 @@
-### Narra Express API
+# Narra Express
+
+> Express.js MVC boilerplate with TypeScript, Authentication, and Database support
+
+## 🚀 Quick Start
+
+Create a new Narra Express app:
+
+```bash
+npx narra-express my-app
+cd my-app
+cp .env.example .env
+# Edit .env with your credentials
+npm run dev
+```
+
+**That's it!** Your Express.js API with MVC structure is ready at `http://localhost:3000`
+
+## 📖 Full Documentation
+
+See [Create Narra App Guide](docs/CREATE_NARRA_APP.md) for detailed setup instructions and alternative installation methods.
+
+---
+
+## Narra Express API
 
 # DATABASE
 ### To setup database configuration
