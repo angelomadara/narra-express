@@ -1,6 +1,6 @@
 {
   "name": "narra-express",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Express.js backend API with TypeScript",
   "main": "dist/server.js",
   "types": "dist/server.d.ts",
