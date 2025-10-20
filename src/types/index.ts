@@ -1,7 +1,7 @@
 // Custom Request interface that extends Express Request
 export interface CustomRequest extends Express.Request {
   user?: {
-    userId: number;
+    userId: string;
     email: string;
     role: string;
   };
