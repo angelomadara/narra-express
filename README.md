@@ -14,6 +14,17 @@ cp .env.example .env
 npm run dev
 ```
 
+#### Create a 256-bit key 
+This will be use in the .env file for the jwt tokens
+```
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Generate three tokens using the command above. Copy the generate keys and update the following variables in the `.env` file:
+- JW_ACCESS_SECRET
+- JW_REFRESH_SECRET
+- CSRF_JWT_SECRET
+
 **That's it!** Your Express.js API with MVC structure is ready at `http://localhost:3000`
 
 ## 📖 Full Documentation
@@ -113,3 +124,7 @@ npm version minor
 ```
 npm version major
 ```
+
+### TODO:
+- Implement mailer service for email notifications
+- Implement Queue system for background tasks
