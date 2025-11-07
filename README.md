@@ -126,5 +126,9 @@ npm version major
 ```
 
 ### TODO:
+- IMPORTANT: make this app work in a 512mb and 0.5CPU environment
+- Optimize database connections 
+- Optimize the logging feature
+- Optimize the overall performance of the app
 - Implement mailer service for email notifications
 - Implement Queue system for background tasks
