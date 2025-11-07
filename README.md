@@ -132,3 +132,13 @@ npm version major
 - Optimize the overall performance of the app
 - Implement mailer service for email notifications
 - Implement Queue system for background tasks
+
+```
+  // Log memory info on startup
+  const mem = process.memoryUsage();
+  log.info('Initial memory usage', {
+    rss: `${Math.round(mem.rss / 1024 / 1024)}MB`,
+    heapUsed: `${Math.round(mem.heapUsed / 1024 / 1024)}MB`,
+    heapTotal: `${Math.round(mem.heapTotal / 1024 / 1024)}MB`,
+  });
+```
