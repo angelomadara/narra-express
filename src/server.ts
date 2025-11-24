@@ -4,7 +4,6 @@ process.env.NODE_OPTIONS = '--max-old-space-size=384';
 import 'reflect-metadata';
 import express, { Application, Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
-import xssClean from 'xss-clean';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB } from './config/database';
@@ -17,13 +16,13 @@ dotenv.config();
 const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3000');
 
-// Middleware - only use helmet in production
+// Middleware
 if (process.env.NODE_ENV === 'production') {
-  app.use(helmet());
+  app.use(helmet()); // Only in production
 }
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '1mb' })); // Limit payload size
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+app.use(express.json({ limit: '500kb' })); // Reduced from 1mb
+app.use(express.urlencoded({ extended: true, limit: '500kb' }));
 
 // CSRF Protection - Generate tokens for all requests
 app.use(generateCSRFJWT);

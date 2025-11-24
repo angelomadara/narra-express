@@ -30,7 +30,7 @@ export class AuthService {
     }
 
     // 2. Hash password
-    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || '12');
+    const saltRounds = process.env.NODE_ENV === 'production' ? 10 : 12;
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
     // 3. Create user
@@ -199,7 +199,7 @@ export class AuthService {
     }
 
     // 2. Hash new password
-    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || '12');
+    const saltRounds = process.env.NODE_ENV === 'production' ? 10 : 12;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     // 3. Update password and clear reset token

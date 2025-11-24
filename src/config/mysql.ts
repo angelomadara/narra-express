@@ -11,12 +11,13 @@ export const mysqlConfig: DataSourceOptions = {
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '12345678',
   database: process.env.DB_NAME || 'narra-express',
-  entities: ["src/models/*.ts"],
+  entities: [process.env.NODE_ENV === 'production' ? "dist/models/*.js" : "src/models/*.ts"],
   synchronize: process.env.NODE_ENV === 'development', // Only in development!
   logging: process.env.NODE_ENV === 'development' ? ['error','schema'] : false,
   extra: {
-    connectionLimit: 10,
-  }
+    connectionLimit: 3, // Reduced from 10 for low-memory server
+  },
+  cache: false, // Disable query caching to save memory
 };
 
 // Create MySQL DataSource instance
