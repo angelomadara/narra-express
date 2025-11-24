@@ -1,6 +1,5 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import dotenv from 'dotenv';
-import log from '../services/log.service';
 
 dotenv.config(); // sometimes the .env variables are not loaded
 
@@ -14,9 +13,14 @@ export const mongodbConfig: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME || 'narra-mongo',
-  entities: ["src/models/*.ts"],
+  entities: [process.env.NODE_ENV === 'production' ? "dist/models/*.js" : "src/models/*.ts"],
   synchronize: false, // Disable synchronize to avoid index creation issues
   logging: process.env.NODE_ENV === 'development' ? ['error','schema'] : false,
+  extra: {
+    maxPoolSize: 3, // Limit connection pool
+    minPoolSize: 1,
+  },
+  cache: false, // Disable query caching to save memory
 };
 
 // Create MongoDB DataSource instance
@@ -26,10 +30,10 @@ export const MongoDataSource = new DataSource(mongodbConfig);
 export const connectMongoDB = async () => {
   try {
     await MongoDataSource.initialize();
-    log.info('✅ TypeORM MongoDB Database connected successfully');
+    console.log('✅ TypeORM MongoDB Database connected successfully');
     return MongoDataSource;
   } catch (error) {
-    log.error('❌ MongoDB Database connection failed:', error);
+    console.error('❌ MongoDB Database connection failed:', error);
     throw error;
   }
 };

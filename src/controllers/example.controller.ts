@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { BaseController } from './base.controller';
-import log from '../services/log.service';
 
 class ExampleController extends BaseController {
   
@@ -38,13 +37,13 @@ class ExampleController extends BaseController {
   async getTestLogging(req: Request, res: Response): Promise<void> {
     try {
       // Log messages at various levels
-      log.debug('This is a debug message', { test: 'debug' });
-      log.info('This is an info message', { test: 'info' });
-      log.warn('This is a warning message', { test: 'warn' });
-      log.error('This is an error message', { test: 'error' });
-      log.transaction('This is a transaction message', { test: 'transaction' });
-      log.trace('This is a trace message', { test: 'trace' });
-      log.fatal('This is a fatal message', { test: 'fatal' });
+      console.log('[DEBUG] This is a debug message', { test: 'debug' });
+      console.log('[INFO] This is an info message', { test: 'info' });
+      console.warn('[WARN] This is a warning message', { test: 'warn' });
+      console.error('[ERROR] This is an error message', { test: 'error' });
+      console.log('[TRANSACTION] This is a transaction message', { test: 'transaction' });
+      console.log('[TRACE] This is a trace message', { test: 'trace' });
+      console.error('[FATAL] This is a fatal message', { test: 'fatal' });
       
       this.sendSuccessResponse(res, 200, 'Logging test completed. Check logs for details.');
     } catch (error) {

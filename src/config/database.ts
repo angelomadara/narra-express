@@ -2,7 +2,6 @@ import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { MySQLDataSource, connectMySQL } from './mysql';
 import { MongoDataSource, connectMongoDB } from './mongodb';
-import log from '../services/log.service';
 
 dotenv.config();
 
@@ -27,7 +26,7 @@ export const connectDB = async (): Promise<DataSource> => {
     
     return dataSource;
   } catch (error) {
-    log.error('❌ Database connection failed:', error);
+    console.error('❌ Database connection failed:', error);
     process.exit(1);
   }
 };
