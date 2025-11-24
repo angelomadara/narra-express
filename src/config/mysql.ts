@@ -1,6 +1,5 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import dotenv from 'dotenv';
-import log from '../services/log.service';
 
 dotenv.config(); // sometimes the .env variables are not loaded
 
@@ -12,12 +11,13 @@ export const mysqlConfig: DataSourceOptions = {
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '12345678',
   database: process.env.DB_NAME || 'narra-express',
-  entities: ["src/models/*.ts"],
+  entities: [process.env.NODE_ENV === 'production' ? "dist/models/*.js" : "src/models/*.ts"],
   synchronize: process.env.NODE_ENV === 'development', // Only in development!
   logging: process.env.NODE_ENV === 'development' ? ['error','schema'] : false,
   extra: {
-    connectionLimit: 10,
-  }
+    connectionLimit: 3, // Reduced from 10 for low-memory server
+  },
+  cache: false, // Disable query caching to save memory
 };
 
 // Create MySQL DataSource instance
@@ -27,10 +27,10 @@ export const MySQLDataSource = new DataSource(mysqlConfig);
 export const connectMySQL = async () => {
   try {
     await MySQLDataSource.initialize();
-    log.info('✅ TypeORM MySQL Database connected successfully');
+    console.log('✅ TypeORM MySQL Database connected successfully');
     return MySQLDataSource;
   } catch (error) {
-    log.error('❌ MySQL Database connection failed:', error);
+    console.error('❌ MySQL Database connection failed:', error);
     throw error;
   }
 };

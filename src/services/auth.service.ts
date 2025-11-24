@@ -6,7 +6,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { ObjectId } from "mongodb";
-import log from "./log.service";
 
 const isDatabaseMongoDB = () => {
   return process.env.DB_TYPE === 'mongodb';
@@ -31,7 +30,7 @@ export class AuthService {
     }
 
     // 2. Hash password
-    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || '12');
+    const saltRounds = process.env.NODE_ENV === 'production' ? 10 : 12;
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
 
     // 3. Create user
@@ -70,7 +69,6 @@ export class AuthService {
   async login(email: string, password: string): Promise<AuthResponse> {
     // 1. Find user
     const user = await this.userRepository.findOne({ where: { email } });
-    log.info("found user", user);
     if (!user) {
       throw new Error('Invalid credentials');
     }
@@ -82,7 +80,6 @@ export class AuthService {
 
     // 3. Validate password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    log.info("password valid", isPasswordValid);
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
@@ -90,7 +87,6 @@ export class AuthService {
     // 4. Generate tokens
     const accessToken = this.generateAccessToken(user);
     const refreshToken = this.generateRefreshToken(user);
-    log.info("generated tokens", { accessToken, refreshToken });
     
     // 5. Store refresh token
     user.refreshToken = refreshToken;
@@ -184,7 +180,7 @@ export class AuthService {
 
     // 4. Send reset email (implement email service)
     // await this.emailService.sendPasswordResetEmail(user.email, resetToken);
-    log.info(`Password reset token for ${email}: ${resetToken}`);
+    console.log(`Password reset token for ${email}: ${resetToken}`);
 
     return true;
   }
@@ -203,7 +199,7 @@ export class AuthService {
     }
 
     // 2. Hash new password
-    const saltRounds = parseInt(process.env.BCRYPT_ROUNDS || '12');
+    const saltRounds = process.env.NODE_ENV === 'production' ? 10 : 12;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
     // 3. Update password and clear reset token
@@ -281,7 +277,6 @@ export class AuthService {
   // Get user by ID
   async getUserById(userId: string): Promise<User | null> {
     let user: User | null = null;
-    // log.info("Getting user by ID",  userId );
     if (isDatabaseMongoDB()) {
       user = await this.userRepository.findOne({ 
         where: { _id: new ObjectId(userId) }
@@ -291,8 +286,6 @@ export class AuthService {
         where: { id: Number(userId) } 
       });
     }
-
-    log.info('fetched user', user);
 
     if (!user) {
       return null;

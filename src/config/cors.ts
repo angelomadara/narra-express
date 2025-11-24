@@ -1,5 +1,4 @@
 import { CorsOptions } from 'cors';
-import log from '../services/log.service';
 
 const getAllowedOrigins = (): string[] => {
   const env = process.env.NODE_ENV || 'development';
@@ -43,7 +42,7 @@ export const corsOptions: CorsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      log.warn(`CORS blocked origin: ${origin}`);
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },

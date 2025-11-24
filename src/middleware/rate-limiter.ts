@@ -1,6 +1,5 @@
 import rateLimit from "express-rate-limit";
 import { Request } from 'express';
-import log from "../services/log.service";
 
 // General rate limiting for other auth routes
 export const generalAuthLimiter = rateLimit({
@@ -26,11 +25,9 @@ export const userBasedLimiter = rateLimit({
     // Ensure we always return a string
     if (token) {
       const key = `${req.ip}.${token}`;
-      log.info(key)
       return key;
     }
     const fallbackKey = req.ip || 'unknown';
-    log.info(fallbackKey)
     return fallbackKey;
   }
 });

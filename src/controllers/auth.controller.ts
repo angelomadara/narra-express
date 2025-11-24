@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
 import { RegisterDTO, LoginDTO, ResetPasswordDTO } from '../dto/register.dto';
 import { BaseController } from './base.controller';
-import log from '../services/log.service';
 
 class AuthController extends BaseController {
   private authService: AuthService;
@@ -16,8 +15,6 @@ class AuthController extends BaseController {
    * User Registration
    */
   async register(req: Request, res: Response): Promise<void> {
-    log.info("User registration attempt", { body: req.body });
-    
     // Handle express-validator validation errors
     if (!this.validateRequest(req, res)) {
       return;
@@ -106,7 +103,7 @@ class AuthController extends BaseController {
         message: 'Logout successful'
       });
     } catch (error) {
-      log.error('Logout error:', error);
+      console.error('Logout error:', error);
       
       res.status(500).json({
         error: 'Logout failed',
@@ -119,8 +116,6 @@ class AuthController extends BaseController {
    * Get Current User Profile
    */
   async getProfile(req: Request, res: Response): Promise<void> {
-
-    log.info("Fetching profile for user", { userId: req.user });
     try {
       if (!req.user) {
         res.status(401).json({
@@ -138,8 +133,7 @@ class AuthController extends BaseController {
         data: profile
       });
     } catch (error) {
-      log.info("getProfile Request", req);
-      log.error('Get profile error:', error);
+      console.error('Get profile error:', error);
       
       res.status(500).json({
         error: 'Failed to get profile',
@@ -171,7 +165,7 @@ class AuthController extends BaseController {
         data: account 
       });
     } catch (error) {
-      log.error('Forgot password error:', error);
+      console.error('Forgot password error:', error);
       
       res.status(500).json({
         error: 'Password reset request failed',
@@ -209,7 +203,7 @@ class AuthController extends BaseController {
         message: 'Password reset successful'
       });
     } catch (error) {
-      log.error('Reset password error:', error);
+      console.error('Reset password error:', error);
       
       if (error instanceof Error && error.message === 'Invalid or expired reset token') {
         res.status(400).json({
